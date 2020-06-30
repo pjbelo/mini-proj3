@@ -1,11 +1,16 @@
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 const port = process.env.PORT || 8080;
-const host = process.env.HOST || '127.0.0.1';
-const express = require('express');
+const host = process.env.HOST || "127.0.0.1";
+const express = require("express");
 const app = express();
 const cors = require("cors");
-app.use(cors({
-  exposedHeaders: ['Location'],
-}));
+app.use(
+  cors({
+    exposedHeaders: ["Location"],
+  })
+);
 /*
 //allowed domains
 const permittedLinker = ['localhost', '127.0.0.1', 'http://eventos.esmad.ipp.pt/webconference', 'http://eventos.esmad.ipp.pt/', process.env.IP]; // who can link here?
@@ -31,16 +36,15 @@ app.use(function(req, res, next) {
   }
 });
 */
-app.use('/assets', express.static('assets'));
-app.use('/views', express.static('views'));
-app.listen(port, function(err) {
+app.use("/assets", express.static("assets"));
+app.use("/views", express.static("views"));
+app.listen(port, function (err) {
   if (!err) {
-    console.log('Your app is listening on ' + host + ' and port ' + port);
-  }
-  else {
+    console.log("Your app is listening on " + host + " and port " + port);
+  } else {
     console.log(err);
   }
 });
 
 module.exports = app;
-require('./loader.js');
+require("./loader.js");
