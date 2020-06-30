@@ -1,9 +1,8 @@
 {
-    "MySQL": {
-        "username": "webitclo_webbook",
-        "password": "webbookPW#2018",
-        "database": "webitclo_webbook",
-        "host": "webitcloud.net",
-        "dialect": "mysql"
-    }
+  "MySQL": {
+    "username": "wa4katvxw5sg00gl",
+    "database": "iwp1vd0b9x4ja6z5",
+    "host": "zpfp07ebhm2zgmrm.chr7pe7iynqr.eu-west-1.rds.amazonaws.com",
+    "dialect": "mysql"
+  }
 }
