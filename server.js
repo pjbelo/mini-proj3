@@ -1,3 +1,4 @@
+// read env vars from file .env if in not production
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
