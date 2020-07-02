@@ -13,7 +13,7 @@ router.get("/", function (req, res) {
 
 router.get("/speakers/", controllerSpeaker.read);
 router.get("/speakers/:id", controllerSpeaker.readID);
-router.post("/speakers/", isLoggedIn, controllerSpeaker.save);
+router.post("/speakers/", isLoggedIn, controllerSpeaker.create);
 router.put("/speakers/:id", isLoggedIn, isLoggedIn, controllerSpeaker.update);
 router.put("/speakers/del/:id", isLoggedIn, controllerSpeaker.deleteL);
 router.delete("/speakers/:id", isLoggedIn, controllerSpeaker.deleteF);
@@ -53,15 +53,19 @@ router.delete(
   controllerConference.deleteSponsor
 );
 
-router.get("/conferences/:idconf/speakers/", controllerConference.readSpeaker);
+
+// ----------------------------  Speakers ----------------------------
+router.get("/conferences/:idconf/speakers/", controllerSpeaker.read);
+router.get("/conferences/:idconf/speakers/:idspeaker", controllerSpeaker.readID);
 router.post(
-  "/conferences/:idconf/speakers/:idspeaker",
+  "/conferences/:idconf/speakers",
   isLoggedIn,
-  controllerConference.saveSpeaker
+  controllerSpeaker.create
 );
+router.put("/conferences/:idconf/speakers/:idspeaker", isLoggedIn, controllerSpeaker.update);
 router.delete(
   "/conferences/:idconf/speakers/:idspeaker",
-  controllerConference.deleteSpeaker
+  controllerSpeaker.deleteF
 );
 
 // ----------------------------  CC Members ----------------------------
