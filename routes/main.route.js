@@ -6,17 +6,36 @@ const controllerCcmember = require("../controllers/ccmember.controller.js");
 const controllerMail = require("../controllers/mail.controller.js");
 const jsonMessagesPath = __dirname + "/../assets/jsonMessages/";
 const jsonMessages = require(jsonMessagesPath + "login");
+
 router.get("/", function (req, res) {
   res.send("Conference Project, by Paulo Belo");
   res.end();
 });
 
-router.get("/speakers/", controllerSpeaker.read);
-router.get("/speakers/:id", controllerSpeaker.readID);
+
+// ----------------------------  Speakers ----------------------------
+router.get("/speakers", controllerSpeaker.readAllSpeakers);
+router.get("/speakers/:idspeaker", controllerSpeaker.readID);
 router.post("/speakers/", isLoggedIn, controllerSpeaker.create);
-router.put("/speakers/:id", isLoggedIn, isLoggedIn, controllerSpeaker.update);
-router.put("/speakers/del/:id", isLoggedIn, controllerSpeaker.deleteL);
-router.delete("/speakers/:id", isLoggedIn, controllerSpeaker.deleteF);
+router.put("/speakers/:idspeaker", isLoggedIn, controllerSpeaker.update);
+router.get("/conferences/:idconf/speakers/", controllerSpeaker.read);
+router.post(
+  "/conferences/:idconf/speakers",
+  isLoggedIn,
+  controllerSpeaker.create
+);
+router.put("/speakers/del/:idspeaker", isLoggedIn, controllerSpeaker.deleteL);
+router.delete("/speakers/:idspeaker", isLoggedIn, controllerSpeaker.deleteF);
+router.delete(
+  "/conferences/:idconf/speakers/:idspeaker",
+  controllerSpeaker.deleteC
+);
+
+
+
+
+
+
 
 router.get("/sponsors/", controllerSponsor.read);
 router.get("/sponsors/:id", controllerSponsor.readID);
@@ -54,19 +73,8 @@ router.delete(
 );
 
 
-// ----------------------------  Speakers ----------------------------
-router.get("/conferences/:idconf/speakers/", controllerSpeaker.read);
-router.get("/conferences/:idconf/speakers/:idspeaker", controllerSpeaker.readID);
-router.post(
-  "/conferences/:idconf/speakers",
-  isLoggedIn,
-  controllerSpeaker.create
-);
-router.put("/conferences/:idconf/speakers/:idspeaker", isLoggedIn, controllerSpeaker.update);
-router.delete(
-  "/conferences/:idconf/speakers/:idspeaker",
-  controllerSpeaker.deleteF
-);
+
+
 
 // ----------------------------  CC Members ----------------------------
 router.get("/conferences/:idconf/ccmembers/", controllerCcmember.read);
