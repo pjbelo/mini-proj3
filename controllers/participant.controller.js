@@ -34,7 +34,7 @@ function create(req, res) {
   req.sanitize("idconf").escape();
   req.sanitize("nomeparticipant").escape();
   req.checkParams("idparticipant", "Insira um email válido.").isEmail();
-  req.checkBody("nomeparticipant", "Insira apenas texto").isAlpha();
+  req.checkBody("nomeparticipant", "Insira apenas texto").matches(/^[a-z ]+$/i);
   const errors = req.validationErrors();
   if (errors) {
     res.send(errors);
