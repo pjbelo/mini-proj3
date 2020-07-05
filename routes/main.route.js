@@ -48,23 +48,23 @@ router.delete(
   controllerSpeaker.deleteC
 );
 
+// ----------------------------  Sponsors ----------------------------
 router.get("/sponsors/", controllerSponsor.read);
 router.get("/sponsors/:id", controllerSponsor.readID);
-router.post("/sponsors/", isLoggedIn, controllerSponsor.save);
+router.post("/sponsors/", isLoggedIn, controllerSponsor.create);
 router.put("/sponsors/:id", isLoggedIn, controllerSponsor.update);
 router.put("/sponsors/del/:id", isLoggedIn, controllerSponsor.deleteL);
 router.delete("/sponsors/:id", isLoggedIn, controllerSponsor.deleteF);
-
-router.get("/conferences/:idconf/sponsors/", controllerConference.readSponsor);
+router.get("/conferences/:idconf/sponsors/", controllerSponsor.readConfSponsor);
 router.post(
   "/conferences/:idconf/sponsors/:idsponsor",
   isLoggedIn,
-  controllerConference.saveSponsor
+  controllerSponsor.createConfSponsor
 );
 router.delete(
   "/conferences/:idconf/sponsors/:idsponsor",
   isLoggedIn,
-  controllerConference.deleteSponsor
+  controllerSponsor.deleteConfSponsor
 );
 
 // ----------------------------  CC Members ----------------------------

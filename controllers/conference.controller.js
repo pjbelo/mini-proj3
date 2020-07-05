@@ -50,92 +50,6 @@ function readConferenceID(req, res) {
   );
 }
 
-function readConfSponsor(req, res) {
-  const idconference = req.sanitize("idconf").escape();
-  const post = { idConference: idconference };
-  const query = connect.con.query(
-    "SELECT distinct sponsor.idSponsor, nome, logo,categoria, link, active FROM sponsor, conf_sponsor where ? order by idSponsor desc",
-    post,
-    function (err, rows, fields) {
-      console.log(query.sql);
-      if (err) {
-        console.log(err);
-        res
-          .status(jsonMessages.db.dbError.status)
-          .send(jsonMessages.db.dbError);
-      } else {
-        console.log(err);
-        if (rows.length == 0) {
-          res
-            .status(jsonMessages.db.noRecords.status)
-            .send(jsonMessages.db.noRecords);
-        } else {
-          res.send(rows);
-        }
-      }
-    }
-  );
-}
-
-function saveConfSponsor(req, res) {
-  //receber os dados do formuário que são enviados por post
-  const idSponsor = req.sanitize("idsponsor").escape();
-  const idConf = req.sanitize("idconf");
-  if (
-    idSponsor != "NULL" &&
-    idConf != "NULL" &&
-    typeof idSponsor != "undefined" &&
-    typeof idConf != "undefined"
-  ) {
-    const post = { idSponsor: idSponsor, idConference: idConf };
-    //criar e executar a query de gravação na BD para inserir os dados presentes no post
-    const query = connect.con.query(
-      "INSERT INTO conf_sponsor SET ?",
-      post,
-      function (err, rows, fields) {
-        console.log(query.sql);
-        if (!err) {
-          res
-            .status(jsonMessages.db.successInsert.status)
-            .send(jsonMessages.db.successInsert);
-        } else {
-          console.log(err);
-          res
-            .status(jsonMessages.db.dbError.status)
-            .send(jsonMessages.db.dbError);
-        }
-      }
-    );
-  } else
-    res
-      .status(jsonMessages.db.requiredData.status)
-      .send(jsonMessages.db.requiredData);
-}
-
-function deleteConfSponsor(req, res) {
-  //criar e executar a query de leitura na BD
-  const idSponsor = req.sanitize("idsponsor").escape();
-  const idConf = req.sanitize("idconf").escape();
-  const params = [idConf, idSponsor];
-  const query = connect.con.query(
-    "DELETE FROM conf_sponsor where idConference = ? and idSponsor = ?",
-    params,
-    function (err, rows, fields) {
-      console.log(query.sql);
-      if (!err) {
-        res
-          .status(jsonMessages.db.successDelete.status)
-          .send(jsonMessages.db.successDelete);
-      } else {
-        console.log(err);
-        res
-          .status(jsonMessages.db.dbError.status)
-          .send(jsonMessages.db.dbError);
-      }
-    }
-  );
-}
-
 function readConfSpeaker(req, res) {
   //criar e executar a query de leitura na BD
   const idConf = req.sanitize("idconf").escape();
@@ -227,10 +141,7 @@ function deleteConfSpeaker(req, res) {
 module.exports = {
   readConference: readConference,
   readConferenceID: readConferenceID,
-  readSponsor: readConfSponsor,
-  saveSponsor: saveConfSponsor,
   readSpeaker: readConfSpeaker,
   saveSpeaker: saveConfSpeaker,
   deleteSpeaker: deleteConfSpeaker,
-  deleteSponsor: deleteConfSponsor,
 };
