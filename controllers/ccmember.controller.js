@@ -8,10 +8,10 @@ function read(req, res) {
     "SELECT * " +
     "FROM ccmembers " +
     "LEFT JOIN conference_ccmembers ON ccmembers.ccmember_id = conference_ccmembers.ccmember_id " +
-    "WHERE idConference=1 " +
+    "WHERE idConference=? " +
     "ORDER BY ccmembers.name ASC;";
   console.log(sqlquery); //////////////////////////////////////////
-  connect.con.query(sqlquery, function (err, rows, fields) {
+  connect.con.query(sqlquery, idconf, function (err, rows, fields) {
     if (err) {
       console.log(err);
       res.status(jsonMessages.db.dbError.status).send(jsonMessages.db.dbError);
