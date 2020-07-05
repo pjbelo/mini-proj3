@@ -28,7 +28,7 @@ function readConference(req, res) {
 function readConferenceID(req, res) {
   const idconf = req.sanitize("id").escape();
   const query = connect.con.query(
-    "SELECT idConference, acronimo, nome,descricao,local,data FROM conference where ? ",
+    "SELECT idConference, acronimo, nome,descricao,local,data FROM conference where idConference=? ",
     idconf,
     function (err, rows, fields) {
       console.log(query.sql);
