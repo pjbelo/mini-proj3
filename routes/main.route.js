@@ -8,10 +8,15 @@ const jsonMessagesPath = __dirname + "/../assets/jsonMessages/";
 const jsonMessages = require(jsonMessagesPath + "login");
 
 router.get("/", function (req, res) {
-  res.send("Conference Project, by Paulo Belo");
+  res.send(
+    "mini-proj3\nPaulo Belo \nProgração Web Avançada \nUniversidade Aberta"
+  );
   res.end();
 });
 
+// ----------------------------  Conferences ----------------------------
+router.get("/conferences", controllerConference.readConference);
+router.get("/conferences/:id", controllerConference.readConferenceID);
 
 // ----------------------------  Speakers ----------------------------
 router.get("/speakers", controllerSpeaker.readAllSpeakers);
@@ -31,21 +36,12 @@ router.delete(
   controllerSpeaker.deleteC
 );
 
-
-
-
-
-
-
 router.get("/sponsors/", controllerSponsor.read);
 router.get("/sponsors/:id", controllerSponsor.readID);
 router.post("/sponsors/", isLoggedIn, controllerSponsor.save);
 router.put("/sponsors/:id", isLoggedIn, controllerSponsor.update);
 router.put("/sponsors/del/:id", isLoggedIn, controllerSponsor.deleteL);
 router.delete("/sponsors/:id", isLoggedIn, controllerSponsor.deleteF);
-
-router.get("/conferences", controllerConference.readConference);
-router.get("/conferences/:id", controllerConference.readConferenceID);
 
 router.get(
   "/conferences/:idconf/participants",
@@ -71,10 +67,6 @@ router.delete(
   isLoggedIn,
   controllerConference.deleteSponsor
 );
-
-
-
-
 
 // ----------------------------  CC Members ----------------------------
 router.get("/conferences/:idconf/ccmembers/", controllerCcmember.read);
