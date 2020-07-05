@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const controllerParticipant = require("../controllers/participant.controller.js");
 const controllerSpeaker = require("../controllers/speaker.controller.js");
 const controllerSponsor = require("../controllers/sponsor.controller.js");
 const controllerConference = require("../controllers/conference.controller.js");
@@ -17,6 +18,17 @@ router.get("/", function (req, res) {
 // ----------------------------  Conferences ----------------------------
 router.get("/conferences", controllerConference.readConference);
 router.get("/conferences/:id", controllerConference.readConferenceID);
+
+// ----------------------------  Participants ----------------------------
+router.get("/conferences/:idconf/participants", controllerParticipant.read);
+router.post(
+  "/conferences/:idconf/participants/:idparticipant/",
+  controllerParticipant.create
+);
+router.delete(
+  "/conferences/:idconf/participants/:idparticipant",
+  controllerParticipant.deleteP
+);
 
 // ----------------------------  Speakers ----------------------------
 router.get("/speakers", controllerSpeaker.readAllSpeakers);
@@ -42,19 +54,6 @@ router.post("/sponsors/", isLoggedIn, controllerSponsor.save);
 router.put("/sponsors/:id", isLoggedIn, controllerSponsor.update);
 router.put("/sponsors/del/:id", isLoggedIn, controllerSponsor.deleteL);
 router.delete("/sponsors/:id", isLoggedIn, controllerSponsor.deleteF);
-
-router.get(
-  "/conferences/:idconf/participants",
-  controllerConference.readParticipant
-);
-router.post(
-  "/conferences/:idconf/participants/:idparticipant/",
-  controllerConference.saveParticipant
-);
-router.delete(
-  "/conferences/:idconf/participants/:idparticipant",
-  controllerConference.deleteParticipant
-);
 
 router.get("/conferences/:idconf/sponsors/", controllerConference.readSponsor);
 router.post(
