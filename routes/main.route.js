@@ -3,6 +3,7 @@ const controllerParticipant = require("../controllers/participant.controller.js"
 const controllerSpeaker = require("../controllers/speaker.controller.js");
 const controllerSponsor = require("../controllers/sponsor.controller.js");
 const controllerVolunteer = require("../controllers/volunteer.controller.js");
+const controllerTask = require("../controllers/task.controller.js");
 const controllerConference = require("../controllers/conference.controller.js");
 const controllerCcmember = require("../controllers/ccmember.controller.js");
 const controllerMail = require("../controllers/mail.controller.js");
@@ -87,9 +88,14 @@ router.delete(
   controllerVolunteer.deleteConfVolunteer
 );
 
-
-
-
+// ----------------------------  Tasks ----------------------------
+router.get("/tasks/", controllerTask.read);
+router.get("/conferences/:idconf/tasks/", controllerTask.readConfTasks);
+router.get("/tasks/:id", controllerTask.readID);
+router.post("/conferences/:idconf/tasks/", isLoggedIn, controllerTask.create);
+//router.post("/conferences/:idconf/volunteers/", isLoggedIn,controllerVolunteer.createConfVolunteer);
+router.put("/tasks/:id", isLoggedIn, controllerTask.update);
+router.delete("/tasks/:id", isLoggedIn, controllerTask.deleteF);
 
 
 // ----------------------------  CC Members ----------------------------
