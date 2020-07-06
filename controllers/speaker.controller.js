@@ -67,7 +67,7 @@ function readID(req, res) {
   });
 }
 
-// Create speaker and set to active
+// Create speaker
 function create(req, res) {
   const idconf = req.sanitize("idconf").escape();
   const nome = req.sanitize("nome").escape();
