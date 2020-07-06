@@ -67,14 +67,13 @@ function readID(req, res) {
   });
 }
 
-// Create speaker and associate to conference x and set to active
-async function create(req, res) {
+// Create speaker and set to active
+function create(req, res) {
   const idconf = req.sanitize("idconf").escape();
   const nome = req.sanitize("nome").escape();
   const foto = req.sanitize("foto").escape();
   const bio = req.sanitize("bio").escape();
   const link = req.sanitize("link").escape();
-  const filiacao = req.sanitize("filiacao").escape();
   const cargo = req.sanitize("cargo").escape();
   const facebook = req.sanitize("facebook").escape();
   const linkedin = req.sanitize("linkedin").escape();
@@ -84,9 +83,6 @@ async function create(req, res) {
     .matches(/^[a-z ]+$/i);
   req
     .checkBody("cargo", "Cargo é obrigatório. Insira apenas texto")
-    .matches(/^[a-z ]+$/i);
-  req
-    .checkBody("filiacao", "Filiação é obrigatório. Insira apenas texto")
     .matches(/^[a-z ]+$/i);
   req
     .checkBody("link", "Link: Insira um url válido.")
@@ -122,13 +118,12 @@ async function create(req, res) {
     res.send(errors);
     return;
   } else {
-    if (nome != "NULL" && filiacao != "NULL" && typeof nome != "undefined") {
+    if (nome != "NULL" && cargo != "NULL" && typeof nome != "undefined") {
       const postdata = {
         nome: nome,
         foto: foto,
         bio: bio,
         link: link,
-        filiacao: filiacao,
         facebook: facebook,
         linkedin: linkedin,
         twitter: twitter,
@@ -136,25 +131,51 @@ async function create(req, res) {
         active: 1,
       };
       //criar e executar a query de gravação na BD para inserir os dados presentes no post
-      const query = await connect.con.query(
+      const query = connect.con.query(
         "INSERT INTO speaker SET ?",
         postdata,
         function (err, result, fields) {
           console.log(query.sql, "\n", result);
           if (!err) {
-            // associate speaker to conference
-            const postdata2 = {
-              idConference: idconf,
-              idSpeaker: result.insertId,
-            };
-            const query2 = connect.con.query(
-              "INSERT INTO conf_speaker SET ?",
-              postdata2,
-              function (err2, result2, fields2) {
-                if (err2) throw err2;
-                console.log(query2.sql, "\n", result2);
-              }
-            );
+            res
+              .status(jsonMessages.db.successInsert.status)
+              .location(result.insertId)
+              .send(jsonMessages.db.successInsert);
+          } else {
+            console.log(err);
+            res
+              .status(jsonMessages.db.dbError.status)
+              .send(jsonMessages.db.dbError);
+          }
+        }
+      );
+    } else
+      res
+        .status(jsonMessages.db.requiredData.status)
+        .end(jsonMessages.db.requiredData);
+  }
+}
+
+// associate speaker x to conference y
+function confSpeakerCreate(req, res) {
+  const idconf = req.sanitize("idconf").escape();
+  const idspeaker = req.sanitize("idspeaker").escape();
+  const errors = req.validationErrors();
+  if (errors) {
+    res.send(errors);
+    return;
+  } else {
+    if (idconf != "NULL" && idspeaker != "NULL") {
+      const postdata = {
+        idConference: idconf,
+        idSpeaker: idspeaker,
+      };
+      const query = connect.con.query(
+        "INSERT INTO conf_speaker SET ?",
+        postdata,
+        function (err, result, fields) {
+          console.log(query.sql, "\n", result);
+          if (!err) {
             res
               .status(jsonMessages.db.successInsert.status)
               .location(result.insertId)
@@ -192,9 +213,6 @@ function update(req, res) {
     .matches(/^[a-z ]+$/i);
   req
     .checkBody("cargo", "Cargo é obrigatório. Insira apenas texto")
-    .matches(/^[a-z ]+$/i);
-  req
-    .checkBody("filiacao", "Filiação é obrigatório. Insira apenas texto")
     .matches(/^[a-z ]+$/i);
   req
     .checkBody("link", "Link: Insira um url válido.")
@@ -361,6 +379,7 @@ module.exports = {
   read: read,
   readID: readID,
   create: create,
+  confSpeakerCreate: confSpeakerCreate,
   update: update,
   deleteL: deleteL,
   deleteC: deleteC,

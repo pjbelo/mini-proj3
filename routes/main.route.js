@@ -33,14 +33,14 @@ router.delete(
 // ----------------------------  Speakers ----------------------------
 router.get("/speakers", controllerSpeaker.readAllSpeakers);
 router.get("/speakers/:idspeaker", controllerSpeaker.readID);
-router.post("/speakers/", isLoggedIn, controllerSpeaker.create);
-router.put("/speakers/:idspeaker", isLoggedIn, controllerSpeaker.update);
 router.get("/conferences/:idconf/speakers/", controllerSpeaker.read);
+router.post("/speakers/", isLoggedIn, controllerSpeaker.create);
 router.post(
-  "/conferences/:idconf/speakers",
+  "/conferences/:idconf/speakers/:idspeaker",
   isLoggedIn,
-  controllerSpeaker.create
+  controllerSpeaker.confSpeakerCreate
 );
+router.put("/speakers/:idspeaker", isLoggedIn, controllerSpeaker.update);
 router.put("/speakers/del/:idspeaker", isLoggedIn, controllerSpeaker.deleteL);
 router.delete("/speakers/:idspeaker", isLoggedIn, controllerSpeaker.deleteF);
 router.delete(
