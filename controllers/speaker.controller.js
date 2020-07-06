@@ -50,7 +50,7 @@ function read(req, res) {
 function readID(req, res) {
   const idspeaker = req.sanitize("idspeaker").escape();
   const sqlquery =
-    "SELECT DISTINCT idSpeaker, nome, foto, bio, link, filiacao, active, filiacao, linkedin, twitter, facebook, cargo FROM speaker WHERE idSpeaker = ? ";
+  "SELECT DISTINCT idSpeaker, nome, foto, bio, link, filiacao, active, filiacao, linkedin, twitter, facebook, cargo FROM speaker WHERE idSpeaker = ? ";
   connect.con.query(sqlquery, idspeaker, function (err, result, fields) {
     if (err) {
       console.log(err);
@@ -67,8 +67,10 @@ function readID(req, res) {
   });
 }
 
-// Create speaker and associate to conference x and set to active
-async function create(req, res) {
+
+
+// Create speaker
+function create(req, res) {
   const idconf = req.sanitize("idconf").escape();
   const nome = req.sanitize("nome").escape();
   const foto = req.sanitize("foto").escape();
@@ -79,6 +81,7 @@ async function create(req, res) {
   const facebook = req.sanitize("facebook").escape();
   const linkedin = req.sanitize("linkedin").escape();
   const twitter = req.sanitize("twitter").escape();
+  const active = req.sanitize("active").escape();
   req
     .checkBody("nome", "Nome é obrigatório. Insira apenas texto")
     .matches(/^[a-z ]+$/i);
@@ -91,10 +94,12 @@ async function create(req, res) {
   req
     .checkBody("link", "Link: Insira um url válido.")
     .optional({ checkFalsy: true })
+    .unescape()
     .isURL();
   req
     .checkBody("foto", "Foto: Insira um url válido.")
     .optional({ checkFalsy: true })
+    .unescape()
     .isURL();
   req
     .checkBody(
@@ -102,6 +107,7 @@ async function create(req, res) {
       "Facebook: Insira um url válido: https://facebook.com/name."
     )
     .optional({ checkFalsy: true })
+    .unescape()
     .matches("https://facebook.com/*");
   req
     .checkBody(
@@ -109,6 +115,7 @@ async function create(req, res) {
       "Linkedin: Insira um url válido: https://linkedin.com/name."
     )
     .optional({ checkFalsy: true })
+    .unescape()
     .matches("https://linkedin.com/*");
   req
     .checkBody(
@@ -116,7 +123,9 @@ async function create(req, res) {
       "Twitter: Insira um url válido: https://twitter.com/name."
     )
     .optional({ checkFalsy: true })
+    .unescape()
     .matches("https://twitter.com/*");
+    req.checkBody("active", "O valor só pode ser 0 ou 1").matches(/[0-1]/);
   const errors = req.validationErrors();
   if (errors) {
     res.send(errors);
@@ -133,28 +142,15 @@ async function create(req, res) {
         linkedin: linkedin,
         twitter: twitter,
         cargo: cargo,
-        active: 1,
+        active: active,
       };
       //criar e executar a query de gravação na BD para inserir os dados presentes no post
-      const query = await connect.con.query(
+      const query = connect.con.query(
         "INSERT INTO speaker SET ?",
         postdata,
         function (err, result, fields) {
           console.log(query.sql, "\n", result);
           if (!err) {
-            // associate speaker to conference
-            const postdata2 = {
-              idConference: idconf,
-              idSpeaker: result.insertId,
-            };
-            const query2 = connect.con.query(
-              "INSERT INTO conf_speaker SET ?",
-              postdata2,
-              function (err2, result2, fields2) {
-                if (err2) throw err2;
-                console.log(query2.sql, "\n", result2);
-              }
-            );
             res
               .status(jsonMessages.db.successInsert.status)
               .location(result.insertId)
@@ -172,6 +168,42 @@ async function create(req, res) {
         .status(jsonMessages.db.requiredData.status)
         .end(jsonMessages.db.requiredData);
   }
+}
+
+// Associate speaker x to conference y
+function saveConfSpeaker(req, res) {
+  //receber os dados do formuário que são enviados por post
+  const idConf = req.sanitize("idconf").escape();
+  const idSpeaker = req.sanitize("idspeaker").escape();
+  if (
+    idSpeaker != "NULL" &&
+    idConf != "NULL" &&
+    typeof idSpeaker != "undefined" &&
+    typeof idConf != "undefined"
+  ) {
+    const post = { idSpeaker: idSpeaker, idConference: idConf };
+    //criar e executar a query de gravação na BD para inserir os dados presentes no post
+    const query = connect.con.query(
+      "INSERT INTO conf_speaker SET ?",
+      post,
+      function (err, rows, fields) {
+        console.log(query.sql);
+        if (!err) {
+          res
+            .status(jsonMessages.db.successInsert.status)
+            .send(jsonMessages.db.successInsert);
+        } else {
+          console.log(err);
+          res
+            .status(jsonMessages.db.dbError.status)
+            .send(jsonMessages.db.dbError);
+        }
+      }
+    );
+  } else
+    res
+      .status(jsonMessages.db.requiredData.status)
+      .send(jsonMessages.db.requiredData);
 }
 
 // update speaker x
@@ -365,4 +397,5 @@ module.exports = {
   deleteL: deleteL,
   deleteC: deleteC,
   deleteF: deleteF,
+  saveConfSpeaker: saveConfSpeaker,
 };

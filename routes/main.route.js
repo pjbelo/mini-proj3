@@ -8,6 +8,7 @@ const controllerMail = require("../controllers/mail.controller.js");
 const jsonMessagesPath = __dirname + "/../assets/jsonMessages/";
 const jsonMessages = require(jsonMessagesPath + "login");
 
+// ----------------------------  Home ----------------------------
 router.get("/", function (req, res) {
   res.send(
     "mini-proj3\nPaulo Belo \nProgração Web Avançada \nUniversidade Aberta"
@@ -33,14 +34,14 @@ router.delete(
 // ----------------------------  Speakers ----------------------------
 router.get("/speakers", controllerSpeaker.readAllSpeakers);
 router.get("/speakers/:idspeaker", controllerSpeaker.readID);
-router.post("/speakers/", isLoggedIn, controllerSpeaker.create);
-router.put("/speakers/:idspeaker", isLoggedIn, controllerSpeaker.update);
 router.get("/conferences/:idconf/speakers/", controllerSpeaker.read);
+router.post("/speakers/", isLoggedIn, controllerSpeaker.create);
 router.post(
-  "/conferences/:idconf/speakers",
+  "/conferences/:idconf/speakers/",
   isLoggedIn,
-  controllerSpeaker.create
+  controllerSpeaker.saveConfSpeaker
 );
+router.put("/speakers/:idspeaker", isLoggedIn, controllerSpeaker.update);
 router.put("/speakers/del/:idspeaker", isLoggedIn, controllerSpeaker.deleteL);
 router.delete("/speakers/:idspeaker", isLoggedIn, controllerSpeaker.deleteF);
 router.delete(
