@@ -113,7 +113,7 @@ function create(req, res) {
     res.send(errors);
     return;
   } else {
-    if (name != "NULL" && email != "NULL" && typeof name != "undefined") {
+    if (name != "NULL" && typeof name != "undefined") {
       const post = {
         name: name,
         job: job,
