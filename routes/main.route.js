@@ -79,7 +79,7 @@ router.get(
 router.get("/volunteers/:id", controllerVolunteer.readID);
 router.post("/volunteers/", isLoggedIn, controllerVolunteer.create);
 router.post(
-  "/conferences/:idconf/volunteers/",
+  "/conferences/:idconf/volunteers/:idvolunteer",
   isLoggedIn,
   controllerVolunteer.createConfVolunteer
 );

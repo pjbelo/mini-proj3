@@ -100,6 +100,7 @@ function create(req, res) {
     .matches(/^[a-z ]+$/i);
   req
     .checkBody("email", "Insira um email válido.")
+    .optional({ checkFalsy: true })
     .unescape()
     .isEmail();
   req
