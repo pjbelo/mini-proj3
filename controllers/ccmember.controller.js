@@ -53,24 +53,18 @@ function readID(req, res) {
   );
 }
 
-function save(req, res) {
-  const nome = req.sanitize("nome").escape();
-  const foto = req.sanitize("foto").escape();
-  const bio = req.sanitize("bio").escape();
-  const link = req.sanitize("link").escape();
-  const filiacao = req.sanitize("filiacao").escape();
-  const cargo = req.sanitize("cargo").escape();
+function create(req, res) {
+  const name = req.sanitize("name").escape();
+  const job = req.sanitize("job").escape();
+  const photo = req.sanitize("photo").escape();
   const facebook = req.sanitize("facebook").escape();
-  const linkedin = req.sanitize("linkedin").escape();
   const twitter = req.sanitize("twitter").escape();
-  req.checkBody("nome", "Insira apenas texto").matches(/^[a-z ]+$/i);
-  req.checkBody("cargo", "Insira apenas texto").matches(/^[a-z ]+$/i);
+  const linkedin = req.sanitize("linkedin").escape();
+  const bio = req.sanitize("bio").escape();
+  req.checkBody("name", "Insira apenas texto").matches(/^[a-z ]+$/i);
+  req.checkBody("job", "Insira apenas texto").matches(/^[a-z ]+$/i);
   req
-    .checkBody("link", "Insira um url válido.")
-    .optional({ checkFalsy: true })
-    .isURL();
-  req
-    .checkBody("foto", "Insira um url válido.")
+    .checkBody("photo", "Insira um url válido.")
     .optional({ checkFalsy: true })
     .isURL();
   req
@@ -78,33 +72,31 @@ function save(req, res) {
     .optional({ checkFalsy: true })
     .matches("https://facebook.com/*");
   req
+    .checkBody("twitter", "Insira um url válido: https://twitter.com/name.")
+    .optional({ checkFalsy: true })
+    .matches("https://twitter.com/*");    
+  req
     .checkBody("linkedin", "Insira um url válido: https://linkedin.com/name.")
     .optional({ checkFalsy: true })
     .matches("https://linkedin.com/*");
-  req
-    .checkBody("twitter", "Insira um url válido: https://twitter.com/name.")
-    .optional({ checkFalsy: true })
-    .matches("https://twitter.com/*");
   const errors = req.validationErrors();
   if (errors) {
     res.send(errors);
     return;
   } else {
-    if (nome != "NULL" && filiacao != "NULL" && typeof nome != "undefined") {
+    if (name != "NULL" && job != "NULL" && typeof name != "undefined") {
       const post = {
-        nome: nome,
-        foto: foto,
-        bio: bio,
-        link: link,
-        filiacao: filiacao,
+        name: name,
+        job: job,        
+        photo: photo,
         facebook: facebook,
         linkedin: linkedin,
         twitter: twitter,
-        cargo: cargo,
+        bio: bio,
       };
       //criar e executar a query de gravação na BD para inserir os dados presentes no post
       const query = connect.con.query(
-        "INSERT INTO speaker SET ?",
+        "INSERT INTO ccmembers SET ?",
         post,
         function (err, rows, fields) {
           console.log(query.sql);
@@ -128,25 +120,58 @@ function save(req, res) {
   }
 }
 
+
+// Associate member x to conference y
+function createConfMember(req, res) {
+  //receber os dados do formuário que são enviados por post
+  const idconf = req.sanitize("idconf").escape();
+  const idmember = req.sanitize("idccmember").escape();
+  if (
+    idmember != "NULL" &&
+    idconf != "NULL" &&
+    typeof idmember != "undefined" &&
+    typeof idconf != "undefined"
+  ) {
+    const post = { ccmember_id: idmember, idConference: idconf };
+    const query = connect.con.query(
+      "INSERT INTO conference_ccmembers SET ?",
+      post,
+      function (err, rows, fields) {
+        console.log(query.sql);
+        if (!err) {
+          res
+            .status(jsonMessages.db.successInsert.status)
+            .send(jsonMessages.db.successInsert);
+        } else {
+          console.log(err);
+          res
+            .status(jsonMessages.db.dbError.status)
+            .send(jsonMessages.db.dbError);
+        }
+      }
+    );
+  } else
+    res
+      .status(jsonMessages.db.requiredData.status)
+      .send(jsonMessages.db.requiredData);
+}
+
+
+
+
 function update(req, res) {
-  const nome = req.sanitize("nome").escape();
-  const foto = req.sanitize("foto").escape();
-  const bio = req.sanitize("bio").escape();
-  const link = req.sanitize("link").escape();
-  const filiacao = req.sanitize("filiacao").escape();
-  const cargo = req.sanitize("cargo").escape();
+  const idmember = req.sanitize("idccmember").escape();
+  const name = req.sanitize("name").escape();
+  const job = req.sanitize("job").escape();
+  const photo = req.sanitize("photo").escape();
   const facebook = req.sanitize("facebook").escape();
-  const linkedin = req.sanitize("linkedin").escape();
   const twitter = req.sanitize("twitter").escape();
-  const idSpeaker = req.sanitize("id").escape();
-  req.checkBody("nome", "Insira apenas texto").matches(/^[a-z ]+$/i);
-  req.checkBody("cargo", "Insira apenas texto").matches(/^[a-z ]+$/i);
+  const linkedin = req.sanitize("linkedin").escape();
+  const bio = req.sanitize("bio").escape();
+  req.checkBody("name", "Insira apenas texto").matches(/^[a-z ]+$/i);
+  req.checkBody("job", "Insira apenas texto").matches(/^[a-z ]+$/i);
   req
-    .checkBody("link", "Insira um url válido.")
-    .optional({ checkFalsy: true })
-    .isURL();
-  req
-    .checkBody("foto", "Insira um url válido.")
+    .checkBody("photo", "Insira um url válido.")
     .optional({ checkFalsy: true })
     .isURL();
   req
@@ -154,40 +179,37 @@ function update(req, res) {
     .optional({ checkFalsy: true })
     .matches("https://facebook.com/*");
   req
+    .checkBody("twitter", "Insira um url válido: https://twitter.com/name.")
+    .optional({ checkFalsy: true })
+    .matches("https://twitter.com/*");    
+  req
     .checkBody("linkedin", "Insira um url válido: https://linkedin.com/name.")
     .optional({ checkFalsy: true })
     .matches("https://linkedin.com/*");
-  req
-    .checkBody("twitter", "Insira um url válido: https://twitter.com/name.")
-    .optional({ checkFalsy: true })
-    .matches("https://twitter.com/*");
-  req.checkParams("idSpeaker", "Insira um ID de speaker válido").isNumeric();
   const errors = req.validationErrors();
   if (errors) {
     res.send(errors);
     return;
   } else {
     if (
-      idSpeaker != "NULL" &&
-      typeof nome != "undefined" &&
-      typeof cargo != "undefined" &&
-      typeof idSpeaker != "undefined"
+      idmember != "NULL" &&
+      typeof name != "undefined" &&
+      typeof job != "undefined" &&
+      typeof idmember != "undefined"
     ) {
-      const update = [
-        nome,
-        foto,
-        bio,
-        link,
-        filiacao,
-        cargo,
+      const sqlvalues = [
+        name,
+        job,
+        photo,
         facebook,
-        linkedin,
         twitter,
-        idSpeaker,
+        linkedin,
+        bio,
+        idmember,
       ];
       const query = connect.con.query(
-        "UPDATE speaker SET nome =?, foto =?, bio=?,link=?, filiacao=?, cargo=?, facebook=? , linkedin=?, twitter=?  WHERE idSpeaker=?",
-        update,
+        "UPDATE ccmembers SET name =?, job =?, photo=?, facebook=?, twitter=?, linkedin=?, bio=?  WHERE ccmember_id=?",
+        sqlvalues,
         function (err, rows, fields) {
           console.log(query.sql);
           if (!err) {
@@ -257,7 +279,8 @@ function deleteF(req, res) {
 module.exports = {
   read: read,
   readID: readID,
-  save: save,
+  create: create,
+  createConfMember: createConfMember,
   update: update,
   deleteL: deleteL,
   deleteF: deleteF,

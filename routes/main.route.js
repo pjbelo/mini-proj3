@@ -101,22 +101,29 @@ router.put("/tasks/:id", isLoggedIn, controllerTask.update);
 router.delete("/tasks/:id", isLoggedIn, controllerTask.deleteF);
 
 // ----------------------------  CC Members ----------------------------
-router.get("/conferences/:idconf/ccmembers/", controllerCcmember.read);
+router.get("/conferences/:idconf/ccmembers", controllerCcmember.read);
+router.post(
+  "/conferences/:idconf/ccmembers",
+  isLoggedIn,
+  controllerCcmember.create
+);
 router.post(
   "/conferences/:idconf/ccmembers/:idccmember",
   isLoggedIn,
-  controllerCcmember.save
+  controllerCcmember.createConfMember
 );
 router.put(
-  "/conferences/:idconf/ccmembers/:idccmember",
+  "/ccmembers/:idccmember",
   isLoggedIn,
   controllerCcmember.update
 );
 router.delete(
-  "/conferences/:idconf/ccmembers/:idccmember",
+  "/ccmembers/:idccmember",
   isLoggedIn,
   controllerCcmember.deleteL
 );
+
+
 
 router.post("/contacts/emails", controllerMail.send);
 
