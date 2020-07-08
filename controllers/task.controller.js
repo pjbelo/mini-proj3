@@ -165,10 +165,10 @@ function create(req, res) {
 }
 
 // update task
+// task_id, conference_id, task_name, status, volunteer_id, start_date, end_date, duration, description
 function update(req, res) {
   //receber os dados do formuário que são enviados por post
   const task_id = req.sanitize("id").escape();
-  const conference_id = req.sanitize("conference_id").escape();
   const task_name = req.sanitize("task_name").escape();
   const status = req.sanitize("status").escape();
   const volunteer_id = req.sanitize("volunteer_id").escape();
@@ -204,11 +204,11 @@ function update(req, res) {
     res.send(errors);
     return;
   } else {
-    if (task_name != "NULL" && conference_id != "NULL" && typeof task_name != "undefined") {
-      const sqlvalues = [conference_id, task_name, status, volunteer_id, start_date, end_date, duration, description, task_id];
+    if (task_name != "NULL" && typeof task_name != "undefined") {
+      const sqlvalues = [task_name, status, volunteer_id, start_date, end_date, duration, description, task_id];
       //criar e executar a query de gravação na BD para inserir os dados presentes no post
       const query = connect.con.query(
-        "UPDATE tasks SET conference_id=?, task_name=?, status=?, volunteer_id=?, start_date=?, end_date=?, duration=?, description=?  WHERE task_id=?",
+        "UPDATE tasks SET task_name=?, status=?, volunteer_id=?, start_date=?, end_date=?, duration=?, description=?  WHERE task_id=?",
         sqlvalues,
         function (err, rows, fields) {
           console.log(query.sql);
